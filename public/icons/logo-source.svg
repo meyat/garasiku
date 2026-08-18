@@ -1,0 +1,42 @@
+<svg width="512" height="512" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background: rounded square, brand green -->
+  <rect width="512" height="512" rx="112" fill="#16a34a"/>
+
+  <!-- Garage roof shape -->
+  <path d="M 90 236 L 256 122 L 422 236 L 422 270 L 90 270 Z" fill="#ffffff"/>
+
+  <!-- Garage floor line -->
+  <rect x="88" y="396" width="336" height="14" rx="7" fill="#ffffff" opacity="0.85"/>
+
+  <!-- Motorcycle silhouette -->
+  <g fill="#ffffff">
+    <!-- wheels -->
+    <circle cx="176" cy="362" r="44" fill="none" stroke="#ffffff" stroke-width="20"/>
+    <circle cx="354" cy="362" r="44" fill="none" stroke="#ffffff" stroke-width="20"/>
+
+    <!-- main body: solid chunky shape instead of thin bicycle-like lines -->
+    <path d="M176 362
+             L 200 318
+             L 224 318
+             L 244 276
+             L 300 276
+             L 300 310
+             L 340 310
+             L 354 362
+             L 320 362
+             L 320 340
+             L 236 340
+             L 236 362
+             Z" fill="#ffffff"/>
+
+    <!-- seat -->
+    <rect x="238" y="262" width="66" height="18" rx="9" fill="#ffffff"/>
+
+    <!-- handlebar -->
+    <rect x="182" y="248" width="52" height="14" rx="7" fill="#ffffff"/>
+    <path d="M 222 262 L 244 276" stroke="#ffffff" stroke-width="14" fill="none" stroke-linecap="round"/>
+
+    <!-- headlight -->
+    <circle cx="354" cy="322" r="11" fill="#ffffff"/>
+  </g>
+</svg>

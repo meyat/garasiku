@@ -1,0 +1,163 @@
+"use client";
+
+import { useState, useTransition } from "react";
+import { Plus, Trash2 } from "lucide-react";
+import { createServiceRecord, type ServiceItemInput } from "@/lib/actions/service-record-actions";
+
+interface CompatibleComponent {
+  id: string;
+  name: string;
+  category: string;
+}
+
+const ACTIONS: ServiceItemInput["action"][] = ["inspect", "clean", "repair", "replace", "adjust", "other"];
+const ACTION_LABEL: Record<string, string> = {
+  inspect: "Cek", clean: "Bersihkan", repair: "Perbaiki", replace: "Ganti", adjust: "Setel", other: "Lainnya",
+};
+
+export function ServiceForm({
+  vehicleId, currentOdometer, compatibleComponents,
+}: { vehicleId: string; currentOdometer: number; compatibleComponents: CompatibleComponent[] }) {
+  const [isPending, startTransition] = useTransition();
+  const [error, setError] = useState<string | null>(null);
+
+  const [serviceDate, setServiceDate] = useState(new Date().toISOString().slice(0, 10));
+  const [odometer, setOdometer] = useState(currentOdometer);
+  const [workshopName, setWorkshopName] = useState("");
+  const [mechanicName, setMechanicName] = useState("");
+  const [notes, setNotes] = useState("");
+  const [laborCost, setLaborCost] = useState(0);
+  const [items, setItems] = useState<ServiceItemInput[]>([]);
+
+  function addItem(componentId: string | null, label: string) {
+    setItems((prev) => [
+      ...prev,
+      { componentId, componentLabel: label, action: "replace", conditionNote: "", cost: 0 },
+    ]);
+  }
+
+  function updateItem(index: number, patch: Partial<ServiceItemInput>) {
+    setItems((prev) => prev.map((it, i) => (i === index ? { ...it, ...patch } : it)));
+  }
+
+  function removeItem(index: number) {
+    setItems((prev) => prev.filter((_, i) => i !== index));
+  }
+
+  function handleSubmit() {
+    setError(null);
+    startTransition(async () => {
+      try {
+        await createServiceRecord(vehicleId, {
+          serviceDate, odometer, workshopName, mechanicName, notes, laborCost, items,
+        });
+      } catch (e: any) {
+        setError(e.message ?? "Gagal menyimpan servis");
+      }
+    });
+  }
+
+  return (
+    <div className="space-y-5">
+      {error && (
+        <p className="text-sm text-red-600 bg-red-50 border border-red-200 rounded-lg px-3 py-2">{error}</p>
+      )}
+
+      <div className="grid grid-cols-2 gap-3">
+        <div>
+          <label className="text-sm font-medium">Tanggal Servis</label>
+          <input type="date" value={serviceDate} onChange={(e) => setServiceDate(e.target.value)}
+            className="mt-1 w-full rounded-xl border border-neutral-300 px-3 py-2" />
+        </div>
+        <div>
+          <label className="text-sm font-medium">Odometer (km)</label>
+          <input type="number" value={odometer} onChange={(e) => setOdometer(Number(e.target.value))}
+            className="mt-1 w-full rounded-xl border border-neutral-300 px-3 py-2" />
+        </div>
+      </div>
+
+      <div>
+        <label className="text-sm font-medium">Bengkel (opsional)</label>
+        <input value={workshopName} onChange={(e) => setWorkshopName(e.target.value)}
+          className="mt-1 w-full rounded-xl border border-neutral-300 px-3 py-2" />
+      </div>
+      <div>
+        <label className="text-sm font-medium">Mekanik (opsional)</label>
+        <input value={mechanicName} onChange={(e) => setMechanicName(e.target.value)}
+          className="mt-1 w-full rounded-xl border border-neutral-300 px-3 py-2" />
+      </div>
+
+      <div>
+        <p className="text-sm font-medium mb-2">Item Servis</p>
+
+        {compatibleComponents.length > 0 && (
+          <div className="flex flex-wrap gap-2 mb-3">
+            {compatibleComponents
+              .filter((c) => !items.some((it) => it.componentId === c.id))
+              .map((c) => (
+                <button key={c.id} type="button" onClick={() => addItem(c.id, c.name)}
+                  className="text-xs px-3 py-1.5 rounded-full border border-neutral-300 flex items-center gap-1">
+                  <Plus size={12} /> {c.name}
+                </button>
+              ))}
+          </div>
+        )}
+        <button type="button" onClick={() => addItem(null, "")}
+          className="text-xs text-brand-600 font-medium mb-3">
+          + Item lain (tidak ada di daftar)
+        </button>
+
+        <div className="space-y-3">
+          {items.map((item, i) => (
+            <div key={i} className="bg-white border border-neutral-200 rounded-xl p-3 space-y-2">
+              <div className="flex justify-between items-center">
+                {item.componentId ? (
+                  <p className="font-medium text-sm">{item.componentLabel}</p>
+                ) : (
+                  <input placeholder="Nama item" value={item.componentLabel}
+                    onChange={(e) => updateItem(i, { componentLabel: e.target.value })}
+                    className="text-sm font-medium border-b border-neutral-300 focus:outline-none" />
+                )}
+                <button type="button" onClick={() => removeItem(i)} className="text-red-500">
+                  <Trash2 size={16} />
+                </button>
+              </div>
+              <div className="grid grid-cols-2 gap-2">
+                <select value={item.action} onChange={(e) => updateItem(i, { action: e.target.value as any })}
+                  className="text-sm rounded-lg border border-neutral-300 px-2 py-1.5">
+                  {ACTIONS.map((a) => <option key={a} value={a}>{ACTION_LABEL[a]}</option>)}
+                </select>
+                <input type="number" placeholder="Biaya (Rp)" value={item.cost || ""}
+                  onChange={(e) => updateItem(i, { cost: Number(e.target.value) })}
+                  className="text-sm rounded-lg border border-neutral-300 px-2 py-1.5" />
+              </div>
+              <input placeholder="Catatan kondisi (opsional)" value={item.conditionNote}
+                onChange={(e) => updateItem(i, { conditionNote: e.target.value })}
+                className="w-full text-sm rounded-lg border border-neutral-300 px-2 py-1.5" />
+            </div>
+          ))}
+          {items.length === 0 && (
+            <p className="text-sm text-neutral-400">Belum ada item. Pilih komponen di atas.</p>
+          )}
+        </div>
+      </div>
+
+      <div>
+        <label className="text-sm font-medium">Biaya Jasa/Ongkos (Rp)</label>
+        <input type="number" value={laborCost || ""} onChange={(e) => setLaborCost(Number(e.target.value))}
+          className="mt-1 w-full rounded-xl border border-neutral-300 px-3 py-2" />
+      </div>
+
+      <div>
+        <label className="text-sm font-medium">Catatan (opsional)</label>
+        <textarea value={notes} onChange={(e) => setNotes(e.target.value)}
+          className="mt-1 w-full rounded-xl border border-neutral-300 px-3 py-2" rows={2} />
+      </div>
+
+      <button type="button" disabled={isPending} onClick={handleSubmit}
+        className="w-full rounded-xl bg-brand-600 text-white py-2.5 font-medium disabled:opacity-50">
+        {isPending ? "Menyimpan..." : "Simpan Servis"}
+      </button>
+    </div>
+  );
+}
