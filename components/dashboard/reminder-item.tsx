@@ -2,7 +2,7 @@
 
 import { useTransition } from "react";
 import { dismissReminder, snoozeReminder } from "@/lib/actions/reminder-actions";
-import { REMINDER_TYPE_LABEL, type ReminderRow } from "@/lib/services/reminder-service";
+import { REMINDER_TYPE_LABEL, type ReminderRow } from "@/lib/constants/reminder";
 
 export function ReminderItem({ reminder, vehicleId }: { reminder: ReminderRow; vehicleId: string }) {
   const [isPending, startTransition] = useTransition();

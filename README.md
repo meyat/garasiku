@@ -105,6 +105,20 @@ Implementasinya di `lib/ai/sumopod-provider.ts`, dipilih otomatis lewat factory 
 - **Status servis** (`lib/calculations/service-status.ts`) murni deterministic dari data DB — tidak ada angka acak atau AI-generated percentage.
 - **RLS**: semua tabel milik user (`vehicles`, `fuel_logs`, `service_records`, dst.) hanya bisa diakses oleh `owner_id = auth.uid()`. Master data (brand/model/component/interval) readable oleh semua authenticated user, writable hanya oleh admin (`profiles.role = 'admin'`).
 
+## Catatan Arsitektur Penting: Client/Server Boundary
+
+GarasiKu pakai Next.js App Router — file `lib/supabase/server.ts`, semua `lib/services/*.ts`, dan `lib/auth/*.ts` **hanya boleh dipakai di Server Component/Server Action**, gak boleh diimport langsung dari file `"use client"`. Semua file itu sekarang dikasih `import "server-only"` di baris pertama biar kalau ada yang salah import, build langsung gagal dengan pesan error yang jelas (nunjuk file mana), bukan error umum yang membingungkan.
+
+**Kalau nemu error build kayak:**
+```
+You're importing a component that needs next/headers...
+```
+atau
+```
+You're importing a 'server-only' file into a Client Component...
+```
+Itu tandanya ada file `"use client"` yang (langsung atau gak langsung) import dari `lib/supabase/`, `lib/services/`, atau `lib/auth/`. Solusinya: pisahkan konstanta/tipe yang dibutuhkan client ke file terpisah tanpa dependency server (lihat pola di `lib/constants/reminder.ts`), lalu import dari situ.
+
 ## Roadmap
 
 **Phase 1 (ini)** — Auth, vehicle mgmt, odometer, component DB, compatibility, service interval, checklist, basic dashboard.

@@ -1,20 +1,9 @@
+import "server-only";
 import { createClient } from "@/lib/supabase/server";
+import { type ReminderRow } from "@/lib/constants/reminder";
 
-export interface ReminderRow {
-  id: string;
-  vehicle_id: string;
-  type: string;
-  title: string;
-  due_date: string | null;
-  due_odometer: number | null;
-  is_dismissed: boolean;
-  snoozed_until: string | null;
-}
-
-export const REMINDER_TYPES = ["service", "tax", "insurance", "inspection", "other"] as const;
-export const REMINDER_TYPE_LABEL: Record<string, string> = {
-  service: "Servis", tax: "Pajak", insurance: "Asuransi", inspection: "Inspeksi", other: "Lainnya",
-};
+// Re-exported so existing server-side imports of these from reminder-service still work.
+export { REMINDER_TYPES, REMINDER_TYPE_LABEL, type ReminderRow } from "@/lib/constants/reminder";
 
 export async function getActiveReminders(vehicleId: string): Promise<ReminderRow[]> {
   const supabase = createClient();

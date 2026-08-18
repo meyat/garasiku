@@ -1,3 +1,4 @@
+import "server-only";
 import { createClient } from "@/lib/supabase/server";
 import type { FuelLogEntry } from "@/lib/calculations/fuel-efficiency";
 
