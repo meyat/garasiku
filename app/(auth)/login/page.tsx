@@ -1,4 +1,3 @@
-import Link from "next/link";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 
@@ -51,8 +50,7 @@ export default function LoginPage({ searchParams }: { searchParams: { error?: st
         </form>
 
         <p className="mt-6 text-sm text-neutral-500 text-center">
-          Belum punya akun?{" "}
-          <Link href="/register" className="text-brand-600 font-medium">Daftar</Link>
+          Belum punya akun? Hubungi pemilik GarasiKu untuk dibuatkan akun.
         </p>
       </div>
     </main>

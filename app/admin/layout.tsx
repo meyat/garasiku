@@ -3,6 +3,7 @@ import { requireAdmin } from "@/lib/auth/require-admin";
 
 const NAV = [
   { href: "/admin", label: "Ringkasan" },
+  { href: "/admin/users", label: "User" },
   { href: "/admin/brands", label: "Brand & Model" },
   { href: "/admin/components", label: "Komponen" },
   { href: "/admin/intervals", label: "Interval Servis" },
