@@ -3,9 +3,18 @@
 @tailwind utilities;
 
 :root {
-  --brand: 142 71% 33%;
+  --brand: 199 89% 40%; /* #0284C7 */
 }
 
 body {
-  @apply bg-neutral-50 text-neutral-900 antialiased;
+  @apply bg-slate-50 text-slate-900 antialiased font-sans;
+}
+
+/* Hide scrollbar for horizontal quick-action rails, keep it scrollable */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
 }

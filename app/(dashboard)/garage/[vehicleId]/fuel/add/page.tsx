@@ -1,6 +1,7 @@
 import { notFound, redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { getVehicleById } from "@/lib/services/vehicle-service";
+import { FormField, FormError } from "@/components/ui/form-field";
 
 async function addFuelLog(vehicleId: string, formData: FormData) {
   "use server";
@@ -86,53 +87,33 @@ export default async function AddFuelLogPage({
   const action = addFuelLog.bind(null, params.vehicleId);
 
   return (
-    <main className="min-h-screen px-4 pt-6 pb-24 max-w-md mx-auto">
-      <h1 className="text-xl font-bold">Catat Isi Bensin</h1>
-      <p className="text-neutral-500 text-sm mb-6">{vehicle.nickname} · saat ini {vehicle.current_odometer.toLocaleString("id-ID")} km</p>
+    <main className="min-h-screen px-5 pt-6 pb-28 max-w-md mx-auto">
+      <h1 className="text-xl font-bold text-slate-900">Catat Isi Bensin</h1>
+      <p className="text-slate-400 text-sm mb-6">{vehicle.nickname} · saat ini {vehicle.current_odometer.toLocaleString("id-ID")} km</p>
 
-      {searchParams?.error && (
-        <p className="mb-4 text-sm text-red-600 bg-red-50 border border-red-200 rounded-lg px-3 py-2">
-          {searchParams.error}
-        </p>
-      )}
+      <FormError message={searchParams?.error} />
 
       <form action={action} className="space-y-4">
-        <Field label="Odometer (km)" name="odometer" type="number" required
+        <FormField label="Odometer (km)" name="odometer" type="number" required
           defaultValue={vehicle.current_odometer} />
-        <Field label="Jumlah (Liter)" name="liters" type="number" step="0.01" required />
-        <Field label="Harga per Liter (Rp)" name="pricePerLiter" type="number" />
-        <Field label="Total Biaya (Rp)" name="totalCost" type="number" />
-        <p className="text-xs text-neutral-400 -mt-2">Isi salah satu: harga per liter ATAU total biaya, sisanya dihitung otomatis.</p>
-        <Field label="SPBU (opsional)" name="gasStation" placeholder="Contoh: Pertamina" />
-        <Field label="Jenis Bensin (opsional)" name="fuelType" placeholder="Contoh: Pertamax" />
+        <FormField label="Jumlah (Liter)" name="liters" type="number" step="0.01" required />
+        <FormField label="Harga per Liter (Rp)" name="pricePerLiter" type="number" />
+        <FormField label="Total Biaya (Rp)" name="totalCost" type="number" />
+        <p className="text-xs text-slate-400 -mt-2">Isi salah satu: harga per liter ATAU total biaya, sisanya dihitung otomatis.</p>
+        <FormField label="SPBU (opsional)" name="gasStation" placeholder="Contoh: Pertamina" />
+        <FormField label="Jenis Bensin (opsional)" name="fuelType" placeholder="Contoh: Pertamax" />
 
-        <label className="flex items-center gap-2 text-sm">
+        <label className="flex items-center gap-2 text-sm text-slate-600">
           <input type="checkbox" name="isFullTank" defaultChecked className="rounded" />
           Full tank (isi penuh) — dipakai untuk hitung efisiensi BBM
         </label>
 
-        <Field label="Catatan (opsional)" name="notes" />
+        <FormField label="Catatan (opsional)" name="notes" />
 
-        <button type="submit" className="w-full rounded-xl bg-brand-600 text-white py-2.5 font-medium">
+        <button type="submit" className="w-full rounded-2xl bg-brand-600 text-white py-2.5 font-bold">
           Simpan
         </button>
       </form>
     </main>
-  );
-}
-
-function Field({
-  label, name, type = "text", placeholder, required, defaultValue, step,
-}: {
-  label: string; name: string; type?: string; placeholder?: string;
-  required?: boolean; defaultValue?: string | number; step?: string;
-}) {
-  return (
-    <div>
-      <label className="text-sm font-medium">{label}</label>
-      <input name={name} type={type} placeholder={placeholder} required={required}
-        defaultValue={defaultValue} step={step}
-        className="mt-1 w-full rounded-xl border border-neutral-300 px-3 py-2" />
-    </div>
   );
 }

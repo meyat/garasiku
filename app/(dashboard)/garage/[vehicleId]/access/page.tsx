@@ -16,7 +16,7 @@ export default async function VehicleAccessPage({
   return (
     <main className="min-h-screen px-4 pt-6 pb-24 max-w-md mx-auto">
       <h1 className="text-xl font-bold">Akses Bengkel</h1>
-      <p className="text-neutral-500 text-sm mb-6">
+      <p className="text-slate-500 text-sm mb-6">
         {vehicle.nickname} · Berikan akses ke bengkel supaya mereka bisa lihat riwayat dan catat servis kendaraan ini.
       </p>
 
@@ -29,11 +29,11 @@ export default async function VehicleAccessPage({
       <div>
         <h2 className="font-semibold mb-2">Bengkel dengan Akses</h2>
         {activeGrants.length === 0 ? (
-          <p className="text-sm text-neutral-400 mb-4">Belum ada bengkel yang diberi akses.</p>
+          <p className="text-sm text-slate-400 mb-4">Belum ada bengkel yang diberi akses.</p>
         ) : (
           <div className="space-y-2 mb-6">
             {activeGrants.map((g) => (
-              <div key={g.id} className="flex items-center justify-between bg-white border border-neutral-200 rounded-xl px-4 py-3">
+              <div key={g.id} className="flex items-center justify-between bg-white border border-slate-200 rounded-2xl px-4 py-3">
                 <span className="text-sm font-medium">{g.workshop_name}</span>
                 <form action={revokeWorkshopAccess.bind(null, g.id, vehicle.id)}>
                   <button className="text-xs text-red-500 font-medium">Cabut Akses</button>
@@ -47,7 +47,7 @@ export default async function VehicleAccessPage({
       <h2 className="font-semibold mb-2">Beri Akses Baru</h2>
       <GrantAccessForm vehicleId={vehicle.id} />
 
-      <p className="mt-6 text-xs text-neutral-400">
+      <p className="mt-6 text-xs text-slate-400">
         Bengkel yang diberi akses hanya bisa melihat & mencatat servis untuk kendaraan ini —
         mereka tidak bisa melihat kendaraan lain milikmu. Kamu bisa cabut akses kapan saja.
       </p>

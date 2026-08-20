@@ -12,8 +12,9 @@ import { calculateVehicleHealth } from "@/lib/calculations/vehicle-health";
 import { BottomNav } from "@/components/dashboard/bottom-nav";
 import { FuelEfficiencyChart } from "@/components/dashboard/fuel-efficiency-chart";
 import { HealthScoreCard } from "@/components/dashboard/health-score-card";
+import { HistoryItem } from "@/components/dashboard/history-item";
 import { ReminderItem } from "@/components/dashboard/reminder-item";
-import { Fuel, Wrench, Gauge } from "lucide-react";
+import { Fuel, Wrench, Gauge, Camera, MessageCircle, KeyRound, Pencil } from "lucide-react";
 import clsx from "clsx";
 
 const STATUS_LABEL: Record<ServiceStatus, string> = {
@@ -21,10 +22,10 @@ const STATUS_LABEL: Record<ServiceStatus, string> = {
   inspect: "Perlu Dicek", replaced: "Diganti", repaired: "Diperbaiki", damaged: "Rusak",
 };
 const STATUS_COLOR: Record<ServiceStatus, string> = {
-  ok: "bg-green-100 text-green-700", due_soon: "bg-amber-100 text-amber-700",
-  due: "bg-orange-100 text-orange-700", overdue: "bg-red-100 text-red-700",
-  inspect: "bg-blue-100 text-blue-700", replaced: "bg-neutral-100 text-neutral-600",
-  repaired: "bg-neutral-100 text-neutral-600", damaged: "bg-red-100 text-red-700",
+  ok: "bg-success-50 text-emerald-700", due_soon: "bg-alert-50 text-orange-700",
+  due: "bg-orange-100 text-orange-700", overdue: "bg-rose-50 text-rose-700",
+  inspect: "bg-brand-50 text-brand-700", replaced: "bg-slate-100 text-slate-600",
+  repaired: "bg-slate-100 text-slate-600", damaged: "bg-rose-50 text-rose-700",
 };
 
 const TABS = [
@@ -98,56 +99,69 @@ export default async function VehicleDetailPage({
   const timeline = [
     ...fuelLogs.map((f) => ({
       date: f.filled_at,
-      icon: "⛽",
+      icon: "fuel" as const,
       label: `Isi ${f.fuel_type ?? "bensin"}`,
       detail: `Rp${Math.round(f.total_cost ?? 0).toLocaleString("id-ID")} · ${f.liters}L`,
     })),
     ...serviceRecords.map((s) => ({
       date: s.service_date,
-      icon: "🔧",
+      icon: "service" as const,
       label: s.workshop_name ? `Servis di ${s.workshop_name}` : "Servis kendaraan",
       detail: `${s.odometer.toLocaleString("id-ID")} km · Rp${Math.round(s.total_cost).toLocaleString("id-ID")}`,
     })),
   ].sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
 
   return (
-    <main className="min-h-screen pb-24 px-4 pt-6 max-w-md mx-auto">
-      <h1 className="text-xl font-bold">{vehicle.nickname}</h1>
-      <p className="text-neutral-500 text-sm">
-        {vehicle.brand_name} {vehicle.model_name} {vehicle.variant_name ?? ""} · {vehicle.production_year ?? "-"}
-      </p>
+    <main className="min-h-screen pb-28 px-5 pt-5 max-w-md mx-auto">
+      <div className="flex items-start justify-between">
+        <div>
+          <h1 className="text-xl font-bold text-slate-900">{vehicle.nickname}</h1>
+          <p className="text-slate-400 text-sm">
+            {vehicle.brand_name} {vehicle.model_name} {vehicle.variant_name ?? ""} · {vehicle.production_year ?? "-"}
+          </p>
+          {vehicle.license_plate && (
+            <span className="inline-block mt-1.5 text-xs font-mono font-bold bg-slate-100 text-slate-600 px-2 py-0.5 rounded-lg">
+              {vehicle.license_plate}
+            </span>
+          )}
+        </div>
+        <Link href={`/garage/${vehicle.id}/edit`}
+          className="w-9 h-9 flex items-center justify-center rounded-full bg-white border border-slate-100 text-slate-500 shrink-0">
+          <Pencil size={15} />
+        </Link>
+      </div>
 
-      <div className="mt-3 flex gap-2">
+      <div className="mt-4 flex gap-2">
         <Link href={`/garage/${vehicle.id}/fuel/add`}
-          className="flex-1 text-center text-sm font-medium rounded-xl bg-white border border-neutral-200 py-2.5">
-          ⛽ Catat Bensin
+          className="flex-1 flex items-center justify-center gap-1.5 text-center text-sm font-bold rounded-2xl bg-white border border-slate-100 shadow-card py-2.5 text-slate-700">
+          <Fuel size={15} className="text-brand-600" /> Bensin
         </Link>
         <Link href={`/garage/${vehicle.id}/service/add`}
-          className="flex-1 text-center text-sm font-medium rounded-xl bg-white border border-neutral-200 py-2.5">
-          🔧 Catat Servis
+          className="flex-1 flex items-center justify-center gap-1.5 text-center text-sm font-bold rounded-2xl bg-white border border-slate-100 shadow-card py-2.5 text-slate-700">
+          <Wrench size={15} className="text-brand-600" /> Servis
         </Link>
       </div>
       <div className="mt-2 flex gap-2">
         <Link href={`/garage/${vehicle.id}/inspect`}
-          className="flex-1 text-center text-xs font-medium rounded-xl bg-blue-50 border border-blue-100 text-blue-700 py-2">
-          📷 Cek Kondisi (AI)
+          className="flex-1 flex items-center justify-center gap-1.5 text-center text-xs font-bold rounded-2xl bg-brand-50 border border-brand-100 text-brand-700 py-2">
+          <Camera size={13} /> Cek Kondisi
         </Link>
         <Link href={`/garage/${vehicle.id}/ask-ai`}
-          className="flex-1 text-center text-xs font-medium rounded-xl bg-blue-50 border border-blue-100 text-blue-700 py-2">
-          💬 Tanya Keluhan (AI)
+          className="flex-1 flex items-center justify-center gap-1.5 text-center text-xs font-bold rounded-2xl bg-brand-50 border border-brand-100 text-brand-700 py-2">
+          <MessageCircle size={13} /> Tanya AI
         </Link>
       </div>
       <Link href={`/garage/${vehicle.id}/access`}
-        className="mt-2 block text-center text-xs font-medium text-neutral-500">
-        🔑 Kelola Akses Bengkel
+        className="mt-3 flex items-center justify-center gap-1.5 text-center text-xs font-medium text-slate-400">
+        <KeyRound size={13} /> Kelola Akses Bengkel
       </Link>
 
-      <div className="mt-4 flex gap-1 border-b border-neutral-200">
+      <div className="mt-5 flex gap-1 border-b border-slate-100 overflow-x-auto no-scrollbar">
         {TABS.map((t) => (
           <Link key={t.key} href={`/garage/${vehicle.id}?tab=${t.key}`}
             className={clsx(
-              "px-3 py-2 text-sm font-medium border-b-2 -mb-px",
-              activeTab === t.key ? "border-brand-600 text-brand-700" : "border-transparent text-neutral-500"
+              "px-3 py-2 text-sm font-bold border-b-2 -mb-px whitespace-nowrap",
+              activeTab === t.key ? "border-brand-600 text-brand-700" : "border-transparent text-slate-400"
             )}>
             {t.label}
           </Link>
@@ -170,8 +184,8 @@ export default async function VehicleDetailPage({
           {reminders.length > 0 && (
             <div>
               <div className="flex items-center justify-between mb-2">
-                <h2 className="font-semibold">Pengingat</h2>
-                <Link href={`/garage/${vehicle.id}/reminders/add`} className="text-xs text-brand-600 font-medium">
+                <h2 className="text-sm font-bold text-slate-800">Pengingat</h2>
+                <Link href={`/garage/${vehicle.id}/reminders/add`} className="text-xs text-brand-600 font-bold">
                   + Tambah
                 </Link>
               </div>
@@ -184,26 +198,21 @@ export default async function VehicleDetailPage({
           )}
           {reminders.length === 0 && (
             <Link href={`/garage/${vehicle.id}/reminders/add`}
-              className="block text-center text-sm text-brand-600 font-medium border border-dashed border-neutral-300 rounded-xl py-3">
+              className="block text-center text-sm text-brand-600 font-bold border border-dashed border-slate-300 rounded-3xl py-3">
               + Tambah Pengingat
             </Link>
           )}
 
           <div>
-            <h2 className="font-semibold mb-2">Aktivitas Terbaru</h2>
+            <h2 className="text-sm font-bold text-slate-800 mb-2">Aktivitas Terbaru</h2>
             {timeline.length === 0 ? (
-              <p className="text-sm text-neutral-400">Belum ada aktivitas.</p>
+              <p className="text-sm text-slate-400">Belum ada aktivitas.</p>
             ) : (
               <div className="space-y-2">
                 {timeline.slice(0, 5).map((t, i) => (
-                  <div key={i} className="flex items-center gap-3 bg-white border border-neutral-200 rounded-xl px-4 py-3">
-                    <span>{t.icon}</span>
-                    <div className="flex-1">
-                      <p className="text-sm font-medium">{t.label}</p>
-                      <p className="text-xs text-neutral-500">{t.detail}</p>
-                    </div>
-                    <span className="text-xs text-neutral-400">{new Date(t.date).toLocaleDateString("id-ID")}</span>
-                  </div>
+                  <HistoryItem key={i} icon={t.icon} title={t.label}
+                    subtitle={new Date(t.date).toLocaleDateString("id-ID", { day: "2-digit", month: "short" })}
+                    amountLabel={t.detail} />
                 ))}
               </div>
             )}
@@ -214,41 +223,38 @@ export default async function VehicleDetailPage({
       {activeTab === "maintenance" && (
         <div className="mt-4 space-y-2">
           {!vehicle.variant_id ? (
-            <div className="bg-blue-50 border border-blue-200 rounded-xl p-4 text-sm text-blue-800">
+            <div className="bg-brand-50 border border-brand-100 rounded-2xl p-4 text-sm text-brand-800">
               Kendaraan belum tercocokkan ke database, checklist otomatis belum tersedia.
             </div>
           ) : checklist.length === 0 ? (
-            <p className="text-sm text-neutral-500">Belum ada data interval servis untuk varian ini.</p>
+            <p className="text-sm text-slate-500">Belum ada data interval servis untuk varian ini.</p>
           ) : (
             checklist.map((c) => (
-              <div key={c.componentName} className="flex items-center justify-between bg-white rounded-xl border border-neutral-200 px-4 py-3">
+              <div key={c.componentName} className="flex items-center justify-between bg-white rounded-2xl border border-slate-100 px-4 py-3">
                 <div>
-                  <p className="font-medium text-sm">{c.componentName}</p>
+                  <p className="font-bold text-sm text-slate-800">{c.componentName}</p>
                   {c.kmRemaining != null && (
-                    <p className="text-xs text-neutral-500">
+                    <p className="text-xs text-slate-400">
                       {c.kmRemaining >= 0 ? `${c.kmRemaining.toLocaleString("id-ID")} km lagi` : `Lewat ${Math.abs(c.kmRemaining).toLocaleString("id-ID")} km`}
                     </p>
                   )}
                 </div>
-                <span className={clsx("text-xs font-medium px-2.5 py-1 rounded-full", STATUS_COLOR[c.status])}>
+                <span className={clsx("text-xs font-bold px-2.5 py-1 rounded-full", STATUS_COLOR[c.status])}>
                   {STATUS_LABEL[c.status]}
                 </span>
               </div>
             ))
           )}
 
-          <h2 className="font-semibold pt-4">Riwayat Servis</h2>
+          <h2 className="text-sm font-bold text-slate-800 pt-4">Riwayat Servis</h2>
           {serviceRecords.length === 0 ? (
-            <p className="text-sm text-neutral-400">Belum ada riwayat servis.</p>
+            <p className="text-sm text-slate-400">Belum ada riwayat servis.</p>
           ) : (
             serviceRecords.map((s) => (
-              <div key={s.id} className="bg-white border border-neutral-200 rounded-xl px-4 py-3">
-                <div className="flex justify-between">
-                  <p className="text-sm font-medium">{s.workshop_name ?? "Servis"}</p>
-                  <p className="text-xs text-neutral-400">{new Date(s.service_date).toLocaleDateString("id-ID")}</p>
-                </div>
-                <p className="text-xs text-neutral-500">{s.odometer.toLocaleString("id-ID")} km · Rp{Math.round(s.total_cost).toLocaleString("id-ID")}</p>
-              </div>
+              <HistoryItem key={s.id} icon="service"
+                title={s.workshop_name ?? "Servis"}
+                subtitle={`${s.odometer.toLocaleString("id-ID")} km · ${new Date(s.service_date).toLocaleDateString("id-ID")}`}
+                amountLabel={`Rp${Math.round(s.total_cost).toLocaleString("id-ID")}`} />
             ))
           )}
         </div>
@@ -266,21 +272,15 @@ export default async function VehicleDetailPage({
           </div>
           <StatCard label="Biaya per km" value={efficiency.costPerKm ? `Rp${Math.round(efficiency.costPerKm).toLocaleString("id-ID")}` : "—"} full />
 
-          <h2 className="font-semibold pt-2">Riwayat Isi Bensin</h2>
+          <h2 className="text-sm font-bold text-slate-800 pt-2">Riwayat Isi Bensin</h2>
           {fuelLogs.length === 0 ? (
-            <p className="text-sm text-neutral-400">Belum ada catatan bensin.</p>
+            <p className="text-sm text-slate-400">Belum ada catatan bensin.</p>
           ) : (
             fuelLogs.map((f) => (
-              <div key={f.id} className="bg-white border border-neutral-200 rounded-xl px-4 py-3 flex justify-between">
-                <div>
-                  <p className="text-sm font-medium">{f.liters}L {f.is_full_tank ? "(Full)" : "(Sebagian)"}</p>
-                  <p className="text-xs text-neutral-500">{f.odometer.toLocaleString("id-ID")} km · {f.gas_station ?? "-"}</p>
-                </div>
-                <div className="text-right">
-                  <p className="text-sm font-medium">Rp{Math.round(f.total_cost ?? 0).toLocaleString("id-ID")}</p>
-                  <p className="text-xs text-neutral-400">{new Date(f.filled_at).toLocaleDateString("id-ID")}</p>
-                </div>
-              </div>
+              <HistoryItem key={f.id} icon="fuel"
+                title={`${f.liters}L ${f.is_full_tank ? "(Full)" : "(Sebagian)"}`}
+                subtitle={`${f.odometer.toLocaleString("id-ID")} km · ${f.gas_station ?? "-"}`}
+                amountLabel={`Rp${Math.round(f.total_cost ?? 0).toLocaleString("id-ID")}`} />
             ))
           )}
         </div>
@@ -294,20 +294,20 @@ export default async function VehicleDetailPage({
           </div>
 
           <Link href={`/garage/${vehicle.id}/expenses/add`}
-            className="block text-center text-sm text-brand-600 font-medium border border-dashed border-neutral-300 rounded-xl py-3">
+            className="block text-center text-sm text-brand-600 font-bold border border-dashed border-slate-300 rounded-3xl py-3">
             + Catat Pengeluaran Lain
           </Link>
 
           <div>
-            <h2 className="font-semibold mb-2">Per Kategori</h2>
+            <h2 className="text-sm font-bold text-slate-800 mb-2">Per Kategori</h2>
             {expenseByCategory.length === 0 ? (
-              <p className="text-sm text-neutral-400">Belum ada data pengeluaran.</p>
+              <p className="text-sm text-slate-400">Belum ada data pengeluaran.</p>
             ) : (
               <div className="space-y-2">
                 {expenseByCategory.map((e) => (
-                  <div key={e.category} className="flex justify-between bg-white border border-neutral-200 rounded-xl px-4 py-3">
-                    <span className="text-sm">{CATEGORY_LABEL[e.category] ?? e.category}</span>
-                    <span className="text-sm font-medium">Rp{Math.round(e.total).toLocaleString("id-ID")}</span>
+                  <div key={e.category} className="flex justify-between bg-white border border-slate-100 rounded-2xl px-4 py-3">
+                    <span className="text-sm text-slate-700">{CATEGORY_LABEL[e.category] ?? e.category}</span>
+                    <span className="text-sm font-bold text-slate-900">Rp{Math.round(e.total).toLocaleString("id-ID")}</span>
                   </div>
                 ))}
               </div>
@@ -315,20 +315,20 @@ export default async function VehicleDetailPage({
           </div>
 
           <div>
-            <h2 className="font-semibold mb-2">Riwayat</h2>
+            <h2 className="text-sm font-bold text-slate-800 mb-2">Riwayat</h2>
             {expenses.length === 0 ? (
-              <p className="text-sm text-neutral-400">Belum ada pengeluaran.</p>
+              <p className="text-sm text-slate-400">Belum ada pengeluaran.</p>
             ) : (
               <div className="space-y-2">
                 {expenses.map((e) => (
-                  <div key={e.id} className="flex justify-between bg-white border border-neutral-200 rounded-xl px-4 py-3">
+                  <div key={e.id} className="flex justify-between bg-white border border-slate-100 rounded-2xl px-4 py-3">
                     <div>
-                      <p className="text-sm font-medium">{CATEGORY_LABEL[e.category] ?? e.category}</p>
-                      {e.description && <p className="text-xs text-neutral-500">{e.description}</p>}
+                      <p className="text-sm font-bold text-slate-800">{CATEGORY_LABEL[e.category] ?? e.category}</p>
+                      {e.description && <p className="text-xs text-slate-400">{e.description}</p>}
                     </div>
                     <div className="text-right">
-                      <p className="text-sm font-medium">Rp{Math.round(Number(e.amount)).toLocaleString("id-ID")}</p>
-                      <p className="text-xs text-neutral-400">{new Date(e.expense_date).toLocaleDateString("id-ID")}</p>
+                      <p className="text-sm font-bold text-slate-900">Rp{Math.round(Number(e.amount)).toLocaleString("id-ID")}</p>
+                      <p className="text-xs text-slate-400">{new Date(e.expense_date).toLocaleDateString("id-ID")}</p>
                     </div>
                   </div>
                 ))}
@@ -341,17 +341,12 @@ export default async function VehicleDetailPage({
       {activeTab === "history" && (
         <div className="mt-4 space-y-2">
           {timeline.length === 0 ? (
-            <p className="text-sm text-neutral-400">Belum ada riwayat.</p>
+            <p className="text-sm text-slate-400">Belum ada riwayat.</p>
           ) : (
             timeline.map((t, i) => (
-              <div key={i} className="flex items-center gap-3 bg-white border border-neutral-200 rounded-xl px-4 py-3">
-                <span>{t.icon}</span>
-                <div className="flex-1">
-                  <p className="text-sm font-medium">{t.label}</p>
-                  <p className="text-xs text-neutral-500">{t.detail}</p>
-                </div>
-                <span className="text-xs text-neutral-400">{new Date(t.date).toLocaleDateString("id-ID")}</span>
-              </div>
+              <HistoryItem key={i} icon={t.icon} title={t.label}
+                subtitle={new Date(t.date).toLocaleDateString("id-ID", { day: "2-digit", month: "short", year: "numeric" })}
+                amountLabel={t.detail} />
             ))
           )}
         </div>
@@ -364,12 +359,12 @@ export default async function VehicleDetailPage({
 
 function StatCard({ icon, label, value, full }: { icon?: React.ReactNode; label: string; value: string; full?: boolean }) {
   return (
-    <div className={clsx("bg-white rounded-2xl border border-neutral-200 p-4", full && "col-span-2")}>
-      <div className="flex items-center gap-1.5 text-neutral-500 text-xs">
+    <div className={clsx("bg-white rounded-3xl border border-slate-100 shadow-card p-4", full && "col-span-2")}>
+      <div className="flex items-center gap-1.5 text-slate-400 text-xs font-bold uppercase tracking-wide">
         {icon}
         {label}
       </div>
-      <p className="text-lg font-bold mt-1">{value}</p>
+      <p className="text-lg font-bold mt-1 text-slate-900">{value}</p>
     </div>
   );
 }

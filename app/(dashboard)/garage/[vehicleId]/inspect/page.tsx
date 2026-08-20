@@ -9,7 +9,7 @@ export default async function InspectPage({ params }: { params: { vehicleId: str
   return (
     <main className="min-h-screen px-4 pt-6 pb-24 max-w-md mx-auto">
       <h1 className="text-xl font-bold">Cek Kondisi Motor (AI)</h1>
-      <p className="text-neutral-500 text-sm mb-6">
+      <p className="text-slate-500 text-sm mb-6">
         {vehicle.nickname} · Unggah foto bagian yang ingin dicek — misalnya body, lampu, atau ban.
       </p>
 

@@ -16,9 +16,9 @@ export default async function DeleteAccountPage({
         <AlertTriangle size={20} />
         <h1 className="text-xl font-bold">Hapus Akun</h1>
       </div>
-      <p className="text-neutral-500 text-sm mb-6">{user?.email}</p>
+      <p className="text-slate-500 text-sm mb-6">{user?.email}</p>
 
-      <div className="bg-red-50 border border-red-200 rounded-2xl p-4 space-y-2">
+      <div className="bg-red-50 border border-red-200 rounded-3xl p-4 space-y-2">
         <p className="text-sm font-medium text-red-800">Tindakan ini tidak bisa dibatalkan.</p>
         <p className="text-sm text-red-700">Menghapus akun akan menghapus permanen:</p>
         <ul className="text-sm text-red-700 list-disc list-inside space-y-0.5">
@@ -42,13 +42,13 @@ export default async function DeleteAccountPage({
             Ketik <span className="font-bold">HAPUS</span> untuk konfirmasi
           </label>
           <input name="confirmation" required placeholder="HAPUS"
-            className="mt-1 w-full rounded-xl border border-neutral-300 px-3 py-2" />
+            className="mt-1 w-full rounded-2xl border border-slate-300 px-3 py-2" />
         </div>
         <button type="submit"
-          className="w-full rounded-xl bg-red-600 text-white py-2.5 font-medium">
+          className="w-full rounded-2xl bg-red-600 text-white py-2.5 font-medium">
           Hapus Akun Saya Permanen
         </button>
-        <a href="/profile" className="block text-center text-sm text-neutral-500 py-2">
+        <a href="/profile" className="block text-center text-sm text-slate-500 py-2">
           Batal
         </a>
       </form>

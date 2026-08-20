@@ -13,21 +13,22 @@ export default async function AdminLayout({ children }: { children: React.ReactN
   await requireAdmin();
 
   return (
-    <div className="min-h-screen">
-      <header className="border-b border-neutral-200 bg-white sticky top-0 z-10">
-        <div className="max-w-4xl mx-auto px-4 py-3 flex items-center justify-between">
+    <div className="min-h-screen bg-slate-50">
+      <header className="border-b border-slate-100 bg-white sticky top-0 z-10">
+        <div className="max-w-4xl mx-auto px-5 py-3 flex items-center justify-between">
           <p className="font-bold text-brand-700">GarasiKu Admin</p>
-          <Link href="/dashboard" className="text-sm text-neutral-500">Kembali ke App</Link>
+          <Link href="/dashboard" className="text-sm font-bold text-slate-400">Kembali ke App</Link>
         </div>
-        <nav className="max-w-4xl mx-auto px-4 flex gap-4 overflow-x-auto text-sm">
+        <nav className="max-w-4xl mx-auto px-5 flex gap-4 overflow-x-auto no-scrollbar text-sm">
           {NAV.map((n) => (
-            <Link key={n.href} href={n.href} className="py-2 whitespace-nowrap text-neutral-600 hover:text-brand-700">
+            <Link key={n.href} href={n.href}
+              className="py-2 whitespace-nowrap font-bold text-slate-500 hover:text-brand-700">
               {n.label}
             </Link>
           ))}
         </nav>
       </header>
-      <main className="max-w-4xl mx-auto px-4 py-6">{children}</main>
+      <main className="max-w-4xl mx-auto px-5 py-6">{children}</main>
     </div>
   );
 }

@@ -105,7 +105,16 @@ Implementasinya di `lib/ai/sumopod-provider.ts`, dipilih otomatis lewat factory 
 - **Status servis** (`lib/calculations/service-status.ts`) murni deterministic dari data DB — tidak ada angka acak atau AI-generated percentage.
 - **RLS**: semua tabel milik user (`vehicles`, `fuel_logs`, `service_records`, dst.) hanya bisa diakses oleh `owner_id = auth.uid()`. Master data (brand/model/component/interval) readable oleh semua authenticated user, writable hanya oleh admin (`profiles.role = 'admin'`).
 
-## Catatan Arsitektur Penting: Client/Server Boundary
+## Design System
+
+GarasiKu pakai design system custom (bukan default shadcn/Tailwind):
+- **Warna**: brand blue `#0284C7`, background `slate-50` (`#F8FAFC`), success `emerald-500`, alert `orange-500`. Semua di-map lewat `tailwind.config.ts` → `theme.extend.colors.brand/success/alert`, jadi class lama seperti `bg-brand-600` otomatis ikut warna baru tanpa perlu ubah tiap file.
+- **Tipografi**: Plus Jakarta Sans, dimuat lewat `<link>` tag di `app/layout.tsx` (bukan `next/font/google`) — sengaja dipilih karena `next/font` butuh akses internet ke `fonts.googleapis.com` **saat build**, yang bisa gagal di environment dengan network terbatas. Pendekatan `<link>` tag memuat font saat runtime di browser, jadi build selalu sukses di lingkungan manapun.
+- **Radius kartu**: 24px (`rounded-3xl`) untuk card utama, `rounded-2xl` untuk elemen sekunder.
+- **Komponen baru** di `components/dashboard/`: `dashboard-header.tsx` (avatar + salam + notifikasi), `vehicle-card.tsx` (kartu motor gelap premium dengan health badge), `alert-banner.tsx` (reminder), `quick-action-card.tsx` (rail aksi cepat horizontal-scroll), `history-item.tsx` (item riwayat aktivitas).
+- Dashboard (`/dashboard`) dan halaman riwayat lintas-kendaraan baru (`/history`) dibangun penuh pakai komponen-komponen ini.
+
+
 
 GarasiKu pakai Next.js App Router — file `lib/supabase/server.ts`, semua `lib/services/*.ts`, dan `lib/auth/*.ts` **hanya boleh dipakai di Server Component/Server Action**, gak boleh diimport langsung dari file `"use client"`. Semua file itu sekarang dikasih `import "server-only"` di baris pertama biar kalau ada yang salah import, build langsung gagal dengan pesan error yang jelas (nunjuk file mana), bukan error umum yang membingungkan.
 

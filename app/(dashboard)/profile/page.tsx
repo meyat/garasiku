@@ -31,38 +31,38 @@ export default async function ProfilePage({
         </p>
       )}
 
-      <form action={updateProfile} className="mt-4 space-y-4 bg-white border border-neutral-200 rounded-2xl p-4">
+      <form action={updateProfile} className="mt-4 space-y-4 bg-white border border-slate-200 rounded-3xl p-4">
         <div>
           <label className="text-sm font-medium">Nama Lengkap</label>
           <input name="fullName" defaultValue={profile?.full_name ?? ""} required
-            className="mt-1 w-full rounded-xl border border-neutral-300 px-3 py-2" />
+            className="mt-1 w-full rounded-2xl border border-slate-300 px-3 py-2" />
         </div>
         <div>
           <label className="text-sm font-medium">Email</label>
           <input value={user?.email ?? ""} disabled
-            className="mt-1 w-full rounded-xl border border-neutral-200 bg-neutral-50 px-3 py-2 text-neutral-500" />
+            className="mt-1 w-full rounded-2xl border border-slate-200 bg-slate-50 px-3 py-2 text-slate-500" />
         </div>
-        <button type="submit" className="w-full rounded-xl bg-brand-600 text-white py-2.5 font-medium">
+        <button type="submit" className="w-full rounded-2xl bg-brand-600 text-white py-2.5 font-medium">
           Simpan Perubahan
         </button>
       </form>
 
       {profile?.role === "admin" && (
         <Link href="/admin"
-          className="mt-4 flex items-center gap-2 bg-white border border-neutral-200 rounded-2xl p-4 text-sm font-medium">
+          className="mt-4 flex items-center gap-2 bg-white border border-slate-200 rounded-3xl p-4 text-sm font-medium">
           <ShieldCheck size={18} className="text-brand-600" />
           Buka Admin Panel
         </Link>
       )}
 
       <Link href="/workshop"
-        className="mt-3 block text-center text-sm font-medium rounded-xl bg-white border border-neutral-200 py-2.5">
+        className="mt-3 block text-center text-sm font-medium rounded-2xl bg-white border border-slate-200 py-2.5">
         🔧 Mode Bengkel
       </Link>
 
       <form action={signOut} className="mt-6">
         <button type="submit"
-          className="w-full flex items-center justify-center gap-2 rounded-xl border border-neutral-200 py-2.5 text-sm font-medium text-neutral-700">
+          className="w-full flex items-center justify-center gap-2 rounded-2xl border border-slate-200 py-2.5 text-sm font-medium text-slate-700">
           <LogOut size={16} />
           Keluar
         </button>

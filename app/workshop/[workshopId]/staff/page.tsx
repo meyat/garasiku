@@ -2,6 +2,7 @@ import { notFound } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { getWorkshopById } from "@/lib/services/workshop-service";
 import { addWorkshopStaff } from "@/lib/actions/workshop-actions";
+import { FormError } from "@/components/ui/form-field";
 
 export default async function WorkshopStaffPage({
   params, searchParams,
@@ -21,41 +22,37 @@ export default async function WorkshopStaffPage({
   const action = addWorkshopStaff.bind(null, workshop.id);
 
   return (
-    <main className="min-h-screen px-4 pt-6 pb-24 max-w-md mx-auto">
-      <h1 className="text-xl font-bold">Staf — {workshop.name}</h1>
+    <main className="min-h-screen px-5 pt-6 pb-28 max-w-md mx-auto">
+      <h1 className="text-xl font-bold text-slate-900">Staf — {workshop.name}</h1>
 
-      {searchParams?.error && (
-        <p className="mt-4 text-sm text-red-600 bg-red-50 border border-red-200 rounded-lg px-3 py-2">
-          {searchParams.error}
-        </p>
-      )}
+      <div className="mt-4"><FormError message={searchParams?.error} /></div>
 
       <div className="mt-4 space-y-2">
         {(members ?? []).map((m: any) => (
-          <div key={m.id} className="flex justify-between bg-white border border-neutral-200 rounded-xl px-4 py-3">
-            <span className="text-sm">{m.profiles?.full_name ?? m.user_id}</span>
-            <span className="text-xs font-medium text-brand-600 capitalize">{m.role}</span>
+          <div key={m.id} className="flex justify-between bg-white border border-slate-100 rounded-2xl px-4 py-3">
+            <span className="text-sm font-bold text-slate-800">{m.profiles?.full_name ?? m.user_id}</span>
+            <span className="text-xs font-bold text-brand-600 capitalize">{m.role}</span>
           </div>
         ))}
         {(!members || members.length === 0) && (
-          <p className="text-sm text-neutral-400">Hanya kamu sebagai owner. Belum ada staf lain.</p>
+          <p className="text-sm text-slate-400">Hanya kamu sebagai owner. Belum ada staf lain.</p>
         )}
       </div>
 
       {isOwner && (
         <div className="mt-6">
-          <h2 className="font-semibold mb-2">Tambah Staf</h2>
-          <p className="text-xs text-neutral-400 mb-2">
+          <h2 className="text-sm font-bold text-slate-800 mb-2">Tambah Staf</h2>
+          <p className="text-xs text-slate-400 mb-2">
             Staf harus sudah punya akun GarasiKu (daftar dulu pakai email yang sama).
           </p>
           <form action={action} className="space-y-3">
             <input name="email" type="email" placeholder="Email staf" required
-              className="w-full rounded-xl border border-neutral-300 px-3 py-2 text-sm" />
-            <select name="role" className="w-full rounded-xl border border-neutral-300 px-3 py-2 text-sm">
+              className="w-full rounded-2xl border border-slate-200 px-3 py-2 text-sm" />
+            <select name="role" className="w-full rounded-2xl border border-slate-200 px-3 py-2 text-sm">
               <option value="mechanic">Mekanik</option>
               <option value="staff">Staf</option>
             </select>
-            <button className="w-full rounded-xl bg-brand-600 text-white py-2.5 text-sm font-medium">
+            <button className="w-full rounded-2xl bg-brand-600 text-white py-2.5 text-sm font-bold">
               Tambah
             </button>
           </form>

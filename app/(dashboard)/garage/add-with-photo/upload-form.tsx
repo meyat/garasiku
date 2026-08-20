@@ -83,7 +83,7 @@ export function AiVehicleUploadForm() {
         <input type="hidden" name="variantName" value={selectedMatch?.variantName ?? detection.variantGuess ?? ""} />
         {year && <input type="hidden" name="year" value={year} />}
 
-        <div className="bg-green-50 border border-green-200 rounded-xl p-4 flex items-start gap-2">
+        <div className="bg-green-50 border border-green-200 rounded-2xl p-4 flex items-start gap-2">
           <CheckCircle2 size={18} className="text-green-600 shrink-0 mt-0.5" />
           <p className="text-sm text-green-800">
             {selectedMatch
@@ -93,9 +93,10 @@ export function AiVehicleUploadForm() {
         </div>
 
         <Field label="Nama Panggilan" name="nickname" placeholder="Contoh: Si Merah" required />
+        <Field label="Plat Nomor (opsional)" name="licensePlate" placeholder="Contoh: B 1234 ABC" />
         <Field label="Odometer Saat Ini (km)" name="odometer" type="number" required />
 
-        <button type="submit" className="w-full rounded-xl bg-brand-600 text-white py-2.5 font-medium">
+        <button type="submit" className="w-full rounded-2xl bg-brand-600 text-white py-2.5 font-medium">
           Simpan Kendaraan
         </button>
       </form>
@@ -104,12 +105,12 @@ export function AiVehicleUploadForm() {
 
   return (
     <div className="space-y-4">
-      <label className="block border-2 border-dashed border-neutral-300 rounded-2xl p-6 text-center cursor-pointer">
+      <label className="block border-2 border-dashed border-slate-300 rounded-3xl p-6 text-center cursor-pointer">
         <input type="file" accept="image/jpeg,image/png,image/webp" className="hidden" onChange={handleFileChange} />
         {preview ? (
-          <img src={preview} alt="Preview" className="max-h-52 mx-auto rounded-xl object-contain" />
+          <img src={preview} alt="Preview" className="max-h-52 mx-auto rounded-2xl object-contain" />
         ) : (
-          <div className="flex flex-col items-center gap-2 text-neutral-400">
+          <div className="flex flex-col items-center gap-2 text-slate-400">
             <Upload size={28} />
             <p className="text-sm">Tap untuk unggah foto motor</p>
           </div>
@@ -118,7 +119,7 @@ export function AiVehicleUploadForm() {
 
       {file && status !== "done" && (
         <button type="button" onClick={handleDetect} disabled={status === "detecting"}
-          className="w-full rounded-xl bg-brand-600 text-white py-2.5 font-medium flex items-center justify-center gap-2 disabled:opacity-60">
+          className="w-full rounded-2xl bg-brand-600 text-white py-2.5 font-medium flex items-center justify-center gap-2 disabled:opacity-60">
           {status === "detecting" && <Loader2 size={16} className="animate-spin" />}
           {status === "detecting" ? "Mendeteksi..." : "Deteksi dengan AI"}
         </button>
@@ -132,7 +133,7 @@ export function AiVehicleUploadForm() {
 
       {status === "done" && detection && (
         <div className="space-y-3">
-          <div className="bg-blue-50 border border-blue-200 rounded-xl p-4">
+          <div className="bg-blue-50 border border-blue-200 rounded-2xl p-4">
             <p className="text-sm font-medium text-blue-900">
               Perkiraan: {detection.brandGuess} {detection.modelGuess} {detection.variantGuess ?? ""}
             </p>
@@ -146,27 +147,27 @@ export function AiVehicleUploadForm() {
 
           <p className="text-sm font-medium">Pilih motor yang cocok:</p>
           {matches.length === 0 ? (
-            <p className="text-sm text-neutral-500">
+            <p className="text-sm text-slate-500">
               Tidak ditemukan kecocokan persis di database. Kamu tetap bisa lanjut dengan data perkiraan di atas.
             </p>
           ) : (
             <div className="space-y-2">
               {matches.map((m) => (
                 <button key={m.variantId} type="button" onClick={() => setSelectedMatch(m)}
-                  className={`w-full text-left rounded-xl border px-4 py-3 text-sm ${
+                  className={`w-full text-left rounded-2xl border px-4 py-3 text-sm ${
                     selectedMatch?.variantId === m.variantId
                       ? "border-brand-600 bg-brand-50"
-                      : "border-neutral-200 bg-white"
+                      : "border-slate-200 bg-white"
                   }`}>
                   {m.brandName} {m.modelName} {m.variantName}
-                  {m.years.length > 0 && <span className="text-neutral-400"> · {m.years.join(", ")}</span>}
+                  {m.years.length > 0 && <span className="text-slate-400"> · {m.years.join(", ")}</span>}
                 </button>
               ))}
             </div>
           )}
 
           <button type="button" onClick={() => setConfirmed(true)}
-            className="w-full rounded-xl bg-brand-600 text-white py-2.5 font-medium">
+            className="w-full rounded-2xl bg-brand-600 text-white py-2.5 font-medium">
             Konfirmasi & Lanjutkan
           </button>
         </div>
@@ -182,7 +183,7 @@ function Field({
     <div>
       <label className="text-sm font-medium">{label}</label>
       <input name={name} type={type} placeholder={placeholder} required={required}
-        className="mt-1 w-full rounded-xl border border-neutral-300 px-3 py-2" />
+        className="mt-1 w-full rounded-2xl border border-slate-300 px-3 py-2" />
     </div>
   );
 }

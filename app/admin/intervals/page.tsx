@@ -45,8 +45,8 @@ export default async function AdminIntervalsPage({
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-xl font-bold mb-1">Compatibility & Interval Servis</h1>
-        <p className="text-sm text-neutral-500 mb-4">
+        <h1 className="text-xl font-bold text-slate-900 mb-1">Compatibility & Interval Servis</h1>
+        <p className="text-sm text-slate-400 mb-4">
           Ini adalah source of truth checklist perawatan aplikasi. AI tidak pernah menimpa data di sini.
         </p>
 
@@ -54,36 +54,36 @@ export default async function AdminIntervalsPage({
       </div>
 
       {!selectedVariantId ? (
-        <p className="text-sm text-neutral-500">Belum ada varian. Tambahkan lewat halaman Brand & Model dulu.</p>
+        <p className="text-sm text-slate-500">Belum ada varian. Tambahkan lewat halaman Brand & Model dulu.</p>
       ) : (
         <div className="space-y-4">
           {(categories ?? []).map((cat: any) => (
-            <div key={cat.id} className="bg-white border border-neutral-200 rounded-xl p-4">
-              <p className="font-medium text-sm mb-3">{cat.name}</p>
+            <div key={cat.id} className="bg-white border border-slate-100 rounded-3xl p-4">
+              <p className="font-bold text-sm text-slate-800 mb-3">{cat.name}</p>
               <div className="space-y-2">
                 {(cat.components ?? []).map((comp: any) => {
                   const linked = compatibleIds.has(comp.id);
                   const interval = intervalsMap.get(comp.id);
                   return (
-                    <div key={comp.id} className="flex items-start gap-3 py-2 border-t border-neutral-100 first:border-t-0">
+                    <div key={comp.id} className="flex items-start gap-3 py-2 border-t border-slate-100 first:border-t-0">
                       <CompatibilityToggle variantId={selectedVariantId} componentId={comp.id} linked={linked} />
                       <div className="flex-1">
-                        <p className="text-sm">{comp.name}</p>
+                        <p className="text-sm text-slate-700">{comp.name}</p>
                         {linked && (
                           <form action={upsertInterval} className="mt-1 flex flex-wrap items-center gap-1.5">
                             <input type="hidden" name="variantId" value={selectedVariantId} />
                             <input type="hidden" name="componentId" value={comp.id} />
                             <input type="number" name="intervalKm" placeholder="km" defaultValue={interval?.interval_km ?? ""}
-                              className="w-20 rounded border border-neutral-300 px-2 py-1 text-xs" />
+                              className="w-20 rounded-lg border border-slate-200 px-2 py-1 text-xs" />
                             <input type="number" name="intervalMonths" placeholder="bulan" defaultValue={interval?.interval_months ?? ""}
-                              className="w-20 rounded border border-neutral-300 px-2 py-1 text-xs" />
-                            <label className="flex items-center gap-1 text-xs text-neutral-500">
+                              className="w-20 rounded-lg border border-slate-200 px-2 py-1 text-xs" />
+                            <label className="flex items-center gap-1 text-xs text-slate-500">
                               <input type="checkbox" name="inspectOnly" defaultChecked={interval?.inspect_only ?? false} />
                               Inspect only
                             </label>
                             <input name="notes" placeholder="Catatan" defaultValue={interval?.notes ?? ""}
-                              className="flex-1 min-w-[100px] rounded border border-neutral-300 px-2 py-1 text-xs" />
-                            <button className="text-xs bg-neutral-800 text-white px-2.5 py-1 rounded">Simpan</button>
+                              className="flex-1 min-w-[100px] rounded-lg border border-slate-200 px-2 py-1 text-xs" />
+                            <button className="text-xs font-bold bg-slate-800 text-white px-2.5 py-1 rounded-lg">Simpan</button>
                           </form>
                         )}
                       </div>

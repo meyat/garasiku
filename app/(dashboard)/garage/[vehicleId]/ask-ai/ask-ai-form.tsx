@@ -49,7 +49,7 @@ export function AskAiForm({ vehicleId }: { vehicleId: string }) {
         placeholder="Contoh: Motor terasa getar ketika mulai jalan dari diam"
         rows={4}
         maxLength={1000}
-        className="w-full rounded-xl border border-neutral-300 px-3 py-2 text-sm"
+        className="w-full rounded-2xl border border-slate-300 px-3 py-2 text-sm"
       />
 
       {error && (
@@ -57,7 +57,7 @@ export function AskAiForm({ vehicleId }: { vehicleId: string }) {
       )}
 
       <button type="button" onClick={handleAsk} disabled={status === "loading"}
-        className="w-full rounded-xl bg-brand-600 text-white py-2.5 font-medium flex items-center justify-center gap-2 disabled:opacity-60">
+        className="w-full rounded-2xl bg-brand-600 text-white py-2.5 font-medium flex items-center justify-center gap-2 disabled:opacity-60">
         {status === "loading" ? <Loader2 size={16} className="animate-spin" /> : <Stethoscope size={16} />}
         {status === "loading" ? "Menganalisis..." : "Tanya AI"}
       </button>
@@ -77,12 +77,12 @@ export function AskAiForm({ vehicleId }: { vehicleId: string }) {
             </div>
           )}
           {reasoning && (
-            <div className="bg-white border border-neutral-200 rounded-xl p-4">
-              <p className="text-sm text-neutral-700">{reasoning}</p>
+            <div className="bg-white border border-slate-200 rounded-2xl p-4">
+              <p className="text-sm text-slate-700">{reasoning}</p>
             </div>
           )}
           {disclaimer && (
-            <p className="text-xs text-neutral-400 bg-neutral-50 border border-neutral-200 rounded-lg p-3">
+            <p className="text-xs text-slate-400 bg-slate-50 border border-slate-200 rounded-lg p-3">
               {disclaimer}
             </p>
           )}

@@ -64,12 +64,12 @@ export function DamageInspectionForm({ vehicleId }: { vehicleId: string }) {
 
   return (
     <div className="space-y-4">
-      <label className="block border-2 border-dashed border-neutral-300 rounded-2xl p-6 text-center cursor-pointer">
+      <label className="block border-2 border-dashed border-slate-300 rounded-3xl p-6 text-center cursor-pointer">
         <input type="file" accept="image/jpeg,image/png,image/webp" className="hidden" onChange={handleFileChange} />
         {preview ? (
-          <img src={preview} alt="Preview" className="max-h-52 mx-auto rounded-xl object-contain" />
+          <img src={preview} alt="Preview" className="max-h-52 mx-auto rounded-2xl object-contain" />
         ) : (
-          <div className="flex flex-col items-center gap-2 text-neutral-400">
+          <div className="flex flex-col items-center gap-2 text-slate-400">
             <Upload size={28} />
             <p className="text-sm">Tap untuk unggah foto bagian motor</p>
           </div>
@@ -78,7 +78,7 @@ export function DamageInspectionForm({ vehicleId }: { vehicleId: string }) {
 
       {file && (
         <button type="button" onClick={handleInspect} disabled={status === "loading"}
-          className="w-full rounded-xl bg-brand-600 text-white py-2.5 font-medium flex items-center justify-center gap-2 disabled:opacity-60">
+          className="w-full rounded-2xl bg-brand-600 text-white py-2.5 font-medium flex items-center justify-center gap-2 disabled:opacity-60">
           {status === "loading" && <Loader2 size={16} className="animate-spin" />}
           {status === "loading" ? "Memeriksa..." : "Periksa dengan AI"}
         </button>
@@ -91,15 +91,15 @@ export function DamageInspectionForm({ vehicleId }: { vehicleId: string }) {
       {status === "done" && (
         <div className="space-y-3">
           {findings.length === 0 ? (
-            <p className="text-sm text-neutral-500 bg-white border border-neutral-200 rounded-xl p-4">
+            <p className="text-sm text-slate-500 bg-white border border-slate-200 rounded-2xl p-4">
               Tidak ada masalah eksterior yang terlihat jelas dari foto ini.
             </p>
           ) : (
             <div className="space-y-2">
               {findings.map((f, i) => (
-                <div key={i} className="flex items-center justify-between bg-white border border-neutral-200 rounded-xl px-4 py-3">
+                <div key={i} className="flex items-center justify-between bg-white border border-slate-200 rounded-2xl px-4 py-3">
                   <div className="flex items-center gap-2">
-                    <AlertTriangle size={16} className="text-neutral-400" />
+                    <AlertTriangle size={16} className="text-slate-400" />
                     <span className="text-sm">{f.label}</span>
                   </div>
                   <span className={clsx("text-xs font-medium px-2.5 py-1 rounded-full", SEVERITY_COLOR[f.severity])}>
@@ -110,7 +110,7 @@ export function DamageInspectionForm({ vehicleId }: { vehicleId: string }) {
             </div>
           )}
           {disclaimer && (
-            <p className="text-xs text-neutral-400 bg-neutral-50 border border-neutral-200 rounded-lg p-3">
+            <p className="text-xs text-slate-400 bg-slate-50 border border-slate-200 rounded-lg p-3">
               {disclaimer}
             </p>
           )}

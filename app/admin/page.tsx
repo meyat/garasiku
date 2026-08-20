@@ -13,14 +13,14 @@ export default async function AdminOverviewPage() {
 
   return (
     <div>
-      <h1 className="text-xl font-bold mb-4">Ringkasan Master Data</h1>
+      <h1 className="text-xl font-bold text-slate-900 mb-4">Ringkasan Master Data</h1>
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
         <Stat label="Brand" value={brandCount ?? 0} />
         <Stat label="Model" value={modelCount ?? 0} />
         <Stat label="Varian" value={variantCount ?? 0} />
         <Stat label="Pengguna" value={userCount ?? 0} />
       </div>
-      <p className="text-sm text-neutral-500 mt-6">
+      <p className="text-sm text-slate-400 mt-6">
         Gunakan menu di atas untuk menambah brand/model/varian, komponen, dan mengatur compatibility
         serta interval servis. Semua data ini adalah source of truth untuk checklist perawatan —
         AI tidak pernah menimpa data di sini.
@@ -31,9 +31,9 @@ export default async function AdminOverviewPage() {
 
 function Stat({ label, value }: { label: string; value: number }) {
   return (
-    <div className="bg-white rounded-2xl border border-neutral-200 p-4">
-      <p className="text-xs text-neutral-500">{label}</p>
-      <p className="text-2xl font-bold">{value}</p>
+    <div className="bg-white rounded-3xl border border-slate-100 shadow-card p-4">
+      <p className="text-xs font-bold text-slate-400 uppercase tracking-wide">{label}</p>
+      <p className="text-2xl font-bold text-slate-900">{value}</p>
     </div>
   );
 }
