@@ -35,6 +35,11 @@ export interface MaintenanceSuggestionResult {
   disclaimer: string;
 }
 
+export interface ComponentSuggestionResult {
+  components: string[]; // plain names, NOT matched against the master component catalog
+  disclaimer: string;
+}
+
 export interface AIProvider {
   detectVehicle(imageBase64: string): Promise<VehicleDetectionResult | null>;
   inspectDamage(imageBase64: string): Promise<DamageInspectionResult>;
@@ -48,4 +53,11 @@ export interface AIProvider {
       recentServiceComponents: string[];
     };
   }): Promise<MaintenanceSuggestionResult>;
+  /**
+   * Suggests a plausible list of component names for a vehicle that has NO compatibility
+   * data in the master database yet (e.g. an unmatched/manually-entered vehicle). This is
+   * ONLY used as a starting checklist the user picks from when logging a service — it is
+   * never written to `vehicle_component_compatibility` and never treated as verified data.
+   */
+  suggestComponents(vehicleDescription: string): Promise<ComponentSuggestionResult>;
 }

@@ -6,7 +6,7 @@ import type { EfficiencyPoint } from "@/lib/calculations/fuel-efficiency";
 export function FuelEfficiencyChart({ points }: { points: EfficiencyPoint[] }) {
   if (points.length < 2) {
     return (
-      <div className="bg-white rounded-2xl border border-neutral-200 p-6 text-center text-sm text-neutral-400">
+      <div className="bg-white rounded-3xl border border-slate-200 p-6 text-center text-sm text-slate-400">
         Butuh minimal 3 isi full-tank berturutan untuk menampilkan grafik efisiensi.
       </div>
     );
@@ -18,7 +18,7 @@ export function FuelEfficiencyChart({ points }: { points: EfficiencyPoint[] }) {
   }));
 
   return (
-    <div className="bg-white rounded-2xl border border-neutral-200 p-4">
+    <div className="bg-white rounded-3xl border border-slate-200 p-4">
       <p className="text-sm font-medium mb-2">Efisiensi BBM (km/L)</p>
       <ResponsiveContainer width="100%" height={180}>
         <LineChart data={data} margin={{ top: 5, right: 10, left: -20, bottom: 0 }}>

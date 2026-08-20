@@ -4,6 +4,7 @@ import type {
   VehicleDetectionResult,
   DamageInspectionResult,
   MaintenanceSuggestionResult,
+  ComponentSuggestionResult,
 } from "./provider";
 
 const DAMAGE_DISCLAIMER =
@@ -14,6 +15,10 @@ const DAMAGE_DISCLAIMER =
 const MAINTENANCE_DISCLAIMER =
   "Ini adalah saran area pemeriksaan berdasarkan gejala yang kamu jelaskan, bukan diagnosis pasti. " +
   "Kondisi sebenarnya harus dikonfirmasi oleh mekanik melalui pemeriksaan langsung.";
+
+const COMPONENT_DISCLAIMER =
+  "Daftar ini adalah perkiraan AI berdasarkan jenis kendaraan, bukan data compatibility resmi. " +
+  "Komponen sebenarnya bisa berbeda — pilih hanya yang benar-benar relevan untuk servis ini.";
 
 const SUMOPOD_BASE_URL = "https://ai.sumopod.com/v1";
 
@@ -136,5 +141,19 @@ Respond ONLY with JSON: {"possibleAreas": string[], "reasoning": string}`;
       reasoning: parsed.reasoning ?? "",
       disclaimer: MAINTENANCE_DISCLAIMER,
     };
+  }
+
+  async suggestComponents(vehicleDescription: string): Promise<ComponentSuggestionResult> {
+    const prompt = `List the common serviceable components/spare parts for this vehicle, grouped
+mentally by engine/transmission/brakes/electrical/body but returned as a flat list of short names
+in Indonesian (e.g. "Oli Mesin", "Kampas Rem Depan", "Aki", "Filter Udara").
+Vehicle: ${vehicleDescription}
+Respond ONLY with JSON: {"components": string[]}
+Keep it to the 10-15 most commonly serviced items, not an exhaustive parts catalog.`;
+
+    const parsed = await this.chatJSON([{ role: "user", content: prompt }], 400);
+
+    if (!parsed) return { components: [], disclaimer: COMPONENT_DISCLAIMER };
+    return { components: parsed.components ?? [], disclaimer: COMPONENT_DISCLAIMER };
   }
 }

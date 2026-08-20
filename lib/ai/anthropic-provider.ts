@@ -4,6 +4,7 @@ import type {
   VehicleDetectionResult,
   DamageInspectionResult,
   MaintenanceSuggestionResult,
+  ComponentSuggestionResult,
 } from "./provider";
 
 const DAMAGE_DISCLAIMER =
@@ -14,6 +15,10 @@ const DAMAGE_DISCLAIMER =
 const MAINTENANCE_DISCLAIMER =
   "Ini adalah saran area pemeriksaan berdasarkan gejala yang kamu jelaskan, bukan diagnosis pasti. " +
   "Kondisi sebenarnya harus dikonfirmasi oleh mekanik melalui pemeriksaan langsung.";
+
+const COMPONENT_DISCLAIMER =
+  "Daftar ini adalah perkiraan AI berdasarkan jenis kendaraan, bukan data compatibility resmi. " +
+  "Komponen sebenarnya bisa berbeda — pilih hanya yang benar-benar relevan untuk servis ini.";
 
 /**
  * Anthropic-backed implementation. Swap this file (or add a sibling implementing the
@@ -160,6 +165,42 @@ Respond ONLY with JSON: {"possibleAreas": string[], "reasoning": string}`;
       return { possibleAreas: parsed.possibleAreas ?? [], reasoning: parsed.reasoning ?? "", disclaimer: MAINTENANCE_DISCLAIMER };
     } catch {
       return { possibleAreas: [], reasoning: text, disclaimer: MAINTENANCE_DISCLAIMER };
+    }
+  }
+
+  async suggestComponents(vehicleDescription: string): Promise<ComponentSuggestionResult> {
+    const prompt = `List the common serviceable components/spare parts for this vehicle, grouped
+mentally by engine/transmission/brakes/electrical/body but returned as a flat list of short names
+in Indonesian (e.g. "Oli Mesin", "Kampas Rem Depan", "Aki", "Filter Udara").
+Vehicle: ${vehicleDescription}
+Respond ONLY with JSON: {"components": string[]}
+Keep it to the 10-15 most commonly serviced items, not an exhaustive parts catalog.`;
+
+    const response = await fetch("https://api.anthropic.com/v1/messages", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "x-api-key": this.apiKey,
+        "anthropic-version": "2023-06-01",
+      },
+      body: JSON.stringify({
+        model: "claude-sonnet-4-6",
+        max_tokens: 400,
+        messages: [{ role: "user", content: prompt }],
+      }),
+    });
+
+    if (!response.ok) return { components: [], disclaimer: COMPONENT_DISCLAIMER };
+
+    const data = await response.json();
+    const text = (data.content ?? []).map((c: any) => c.text ?? "").join("").trim();
+
+    try {
+      const cleaned = text.replace(/```json|```/g, "").trim();
+      const parsed = JSON.parse(cleaned);
+      return { components: parsed.components ?? [], disclaimer: COMPONENT_DISCLAIMER };
+    } catch {
+      return { components: [], disclaimer: COMPONENT_DISCLAIMER };
     }
   }
 }
